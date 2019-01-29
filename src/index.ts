@@ -1,55 +1,63 @@
+export type Sender<T> = (message: T[]) => void
+export type LengthGetter<T> = (message: T) => number
+
 export class Batcher<T> {
   private batchSize: number
   private batchWait: number
-  private sender: (message: T[]) => void
+  private sender: Sender<T>
+  private lengthGetter: LengthGetter<T>
 
-  private _interval: number | null
-  private _batch: T[]
-  private _batchSize: number
+  private timer: number | null
+  private batch: T[]
+  private currentBatchSize: number
 
   constructor(
     batchSize: number,
     batchWait: number,
-    sender: (message: T[]) => void
+    sender: Sender<T>,
+    lengthGetter: LengthGetter<T> = (message: T) => 1
   ) {
     this.batchSize = batchSize
     this.batchWait = batchWait
     this.sender = sender
+    this.lengthGetter = lengthGetter
 
-    this._batch = []
-    this._batchSize = 0
-    this._interval = null
+    this.batch = []
+    this.currentBatchSize = 0
+    this.timer = null
     this.run()
   }
 
-  private reset() {
-    this._batch = []
-    this._batchSize = 0
+  private tick() {
+    if (this.batch.length > 0) {
+      try {
+        this.sender(this.batch)
+        this.batch = []
+        this.currentBatchSize = 0
+      } catch (err) {
+        console.log(`ERROR: batcher invoke sender err: ${err}`)
+      }
+    }
   }
 
   private run() {
-    this._interval = <any>setInterval(() => {
-      if (this._batch.length > 0) {
-        this.sender(this._batch)
-        this.reset()
-      }
+    this.timer = <any>setInterval(() => {
+      this.tick()
     }, this.batchWait)
   }
 
   public dispatch(message: T) {
-    if (this._batchSize + 1 > this.batchSize) {
-      this.sender(this._batch)
-      this.reset()
+    const size = this.lengthGetter(message)
+    if (this.currentBatchSize + size > this.batchSize) {
+      this.tick()
     }
 
-    this._batch.push(message)
-    this._batchSize++
+    this.batch.push(message)
+    this.currentBatchSize += size
   }
 
   public stop() {
-    if (this._batch.length > 0) {
-      this.sender(this._batch)
-    }
-    this._interval && clearInterval(this._interval)
+    this.tick()
+    this.timer && clearInterval(this.timer)
   }
 }
