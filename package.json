@@ -1,0 +1,50 @@
+{
+  "name": "@zcong/batcher",
+  "version": "0.0.0",
+  "description": "my cool project",
+  "main": "./dist/index.js",
+  "files": [
+    "dist/**/*.js",
+    "dist/index.d.ts",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "npm run lint && npm run jest",
+    "test:cov": "npm run lint && npm run jest:cov",
+    "lint": "tslint -p .",
+    "format": "prettier --write '**/*.{ts,json,md}'",
+    "jest": "jest --detectOpenHandles --forceExit",
+    "jest:cov": "jest --coverage --detectOpenHandles --forceExit",
+    "prepublishOnly": "npm run build"
+  },
+  "types": "./dist/index.d.ts",
+  "author": "zcong1993",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^10.5.2",
+    "tslint": "^5.8.0",
+    "tslint-config-airbnb": "^5.4.2",
+    "typescript": "^3.2.4",
+    "@types/jest": "^23.1.5",
+    "ts-jest": "^23.0.0",
+    "jest": "^23.4.0",
+    "prettier": "^1.15.3",
+    "tslint-config-prettier": "^1.17.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
+  }
+}
