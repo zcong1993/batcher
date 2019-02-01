@@ -51,10 +51,12 @@
   "lint-staged": {
     "*.{js,json,ts}": [
       "yarn format",
-      "git add"
+      "git add ."
     ]
   },
   "husky": {
-    "pre-commit": "yarn lint && lint-staged"
+    "hooks": {
+      "pre-commit": "yarn lint && lint-staged"
+    }
   }
 }
