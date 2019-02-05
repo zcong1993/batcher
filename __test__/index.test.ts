@@ -3,7 +3,9 @@ import { Batcher, Sender } from '../src'
 const delay = (t: number) => new Promise(resolve => setTimeout(resolve, t))
 
 it('batcher should works well', async () => {
-  const mockSender = jest.fn<Sender<string>>((batch: string[]) => batch.length)
+  const mockSender = jest.fn<number, string[][]>(
+    (batch: string[]) => batch.length
+  )
   const bs = new Batcher<string>(30, 500, mockSender)
 
   Array(100)
@@ -17,7 +19,9 @@ it('batcher should works well', async () => {
 })
 
 it('length getter should works well', async () => {
-  const mockSender = jest.fn<Sender<string>>((batch: string[]) => batch.length)
+  const mockSender = jest.fn<number, string[][]>(
+    (batch: string[]) => batch.length
+  )
   const bs = new Batcher<string>(
     1000,
     500,
@@ -38,7 +42,7 @@ it('length getter should works well', async () => {
 it('should console error log when error occurred', async () => {
   global.console.log = jest.fn()
 
-  const mockSender = jest.fn<Sender<string>>((batch: string[]) => {
+  const mockSender = jest.fn<number, string[][]>((batch: string[]) => {
     throw new Error('test error')
   })
   const bs = new Batcher<string>(30, 500, mockSender)
