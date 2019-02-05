@@ -1,4 +1,4 @@
-import { Batcher, Sender } from '../src'
+import { Batcher } from '../src'
 
 const delay = (t: number) => new Promise(resolve => setTimeout(resolve, t))
 
